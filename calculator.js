@@ -118,6 +118,9 @@ equals.addEventListener("click",() =>
                 return;
             }
         display.textContent=result;
+        firstNum = result;
+        secondNum = "";
+        operator = "";
         shouldClearDisplay=true;
     })
 
@@ -154,3 +157,55 @@ function resultLimit(result)
   return result;
 }
 
+
+document.addEventListener("keydown",(event) => 
+    {
+        const key = event.key;
+
+        numbers.forEach( number => 
+            {
+                if(number.textContent === key)
+                    {
+                        number.click();
+                    }
+            })
+
+        operators.forEach( operator => 
+            {
+                if(operator.textContent === key)
+                {
+                    operator.click();
+                }
+
+                if(operator.textContent === "÷" && key ==="/")
+                {
+                    operator.click();
+                }
+
+                if(operator.textContent === "×" && key ==="*")
+                {
+                    operator.click();
+                }
+            })
+            
+
+            if(key === "Enter")
+                {
+                    equals.click();
+                }
+            
+            if(key === "Escape")
+                {
+                    allClear.click();
+                }
+            
+            if(key === "Backspace")
+                {
+                    delBtn.click();
+                }
+
+            if(key.toLowerCase() === "c")
+                {
+                    clear.click();
+                }
+})
