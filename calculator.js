@@ -1,6 +1,6 @@
-let firstNum;
-let secondNum;
-let operator;
+let firstNum="";
+let secondNum="";
+let operator="";
 
 function add(a,b)
 {
@@ -19,6 +19,10 @@ function multiply(a,b)
 
 function divide(a,b)
 {
+    if(b === 0)
+        {
+            return "Nope no 0's";
+        }
     return a / b;
 };
 
@@ -44,14 +48,25 @@ const equals=document.querySelector(".equals");
 const allClear = document.querySelector(".allClear")
 const delBtn = document.querySelector(".delete");
 const clear = document.querySelector(".clear")
+let shouldClearDisplay = false;
 
 display.textContent="";
 numbers.forEach(number => 
     {
         number.addEventListener("click",() => 
         { 
-            if( display.textContent.includes(".") && number.textContent===".")
+            if(shouldClearDisplay)
+                {
+                    display.textContent="";
+                    shouldClearDisplay=false;
+                };
+
+            if(display.textContent.includes(".") && number.textContent===".")
                 { return }
+
+            if(display.textContent.length >= 12)
+                { return }
+
             display.textContent+=number.textContent;
         })
     })
@@ -59,19 +74,51 @@ numbers.forEach(number =>
 operators.forEach(operation => 
     { operation.addEventListener("click",() =>
         {
-            firstNum=display.textContent;
-            display.textContent=""
-            display.textContent=operation.textContent;
-            operator=display.textContent;
-            display.textContent="";
+
+            if(firstNum!=="" && operator!=="")
+                {
+                    if(firstNum!=="" && operator!=="" && shouldClearDisplay)
+                        {
+                            operator=operation.textContent;
+                            return;
+                        };
+                    secondNum=display.textContent;
+                    let result = resultLimit(operate(+firstNum,+secondNum,operator))
+                    if(result === "Nope no 0's"){
+                    display.textContent=result;
+                    firstNum="";
+                    secondNum="";
+                    operator=""; 
+                    return;}
+                    display.textContent=result;
+                    firstNum=display.textContent;
+                    operator=operation.textContent;
+                    shouldClearDisplay = true;
+                }
+                else
+                {
+                    firstNum = display.textContent;
+                    operator=operation.textContent;
+                    shouldClearDisplay = true;
+                }
         })
     })
 
 equals.addEventListener("click",() =>
     {
         secondNum=display.textContent;
-        let result = operate(+firstNum,+secondNum,operator);
+        if(firstNum==="" || secondNum ==="" || operator===""){ return };
+        let result = resultLimit(operate(+firstNum,+secondNum,operator));
+        if(result === "Nope no 0's")
+            {
+                display.textContent=result;
+                firstNum="";
+                secondNum="";
+                operator=""; 
+                return;
+            }
         display.textContent=result;
+        shouldClearDisplay=true;
     })
 
 allClear.addEventListener("click",()=>
@@ -91,4 +138,19 @@ clear.addEventListener("click",()=>
     {
         display.textContent="";
     })
+
+function resultLimit(result)
+{
+  result = result.toString();
+  if(result.length >= 12)
+    {
+        result = (+result).toFixed(3);
+
+        if(result.length > 12)
+            {
+                result = result.slice(0,13)
+            }
+    };
+  return result;
+}
 
